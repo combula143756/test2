@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>智能训练反馈实验</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+
+    background:#f3f4f6;
+
+    font-family:sans-serif;
+
+    transition:0.2s;
+}
+
+h1{
+    margin-bottom:20px;
+    font-size:32px;
+}
+
+.mode-buttons{
+
+    display:flex;
+    flex-direction:column;
+
+    gap:15px;
+
+    width:260px;
+}
+
+button{
+
+    padding:18px;
+
+    border:none;
+    border-radius:18px;
+
+    font-size:18px;
+
+    background:#5b8def;
+    color:white;
+
+    box-shadow:0 6px 16px rgba(0,0,0,0.15);
+
+    transition:0.15s;
+
+}
+
+button:active{
+
+    transform:scale(0.96);
+
+}
+
+#status{
+
+    margin-top:30px;
+
+    font-size:20px;
+
+    color:#333;
+}
+
+.flash{
+
+    background:#ffd966 !important;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>训练反馈实验</h1>
+
+<div class="mode-buttons">
+
+    <button onclick="startMode('none')">
+        无反馈模式
+    </button>
+
+    <button onclick="startMode('light')">
+        灯光反馈模式
+    </button>
+
+    <button onclick="startMode('vibration')">
+        震动反馈模式
+    </button>
+
+    <button onclick="startMode('emotion')">
+        情绪反馈模式
+    </button>
+
+</div>
+
+<div id="status">
+请选择实验模式
+</div>
+
+<script>
+
+let interval;
+
+function startMode(mode){
+
+    clearInterval(interval);
+
+    document.getElementById("status").innerText =
+    "实验进行中...";
+
+    interval = setInterval(()=>{
+
+        triggerFeedback(mode);
+
+    },1000);
+
+}
+
+function triggerFeedback(mode){
+
+    // 无反馈
+    if(mode === "none"){
+
+        return;
+
+    }
+
+    // 灯光反馈
+    if(mode === "light"){
+
+        document.body.classList.add("flash");
+
+        setTimeout(()=>{
+
+            document.body.classList.remove("flash");
+
+        },200);
+
+    }
+
+    // 震动反馈
+    if(mode === "vibration"){
+
+        if(navigator.vibrate){
+
+            navigator.vibrate(120);
+
+        }
+
+    }
+
+    // 情绪反馈
+    if(mode === "emotion"){
+
+        if(navigator.vibrate){
+
+            navigator.vibrate([80,50,120]);
+
+        }
+
+        document.body.classList.add("flash");
+
+        setTimeout(()=>{
+
+            document.body.classList.remove("flash");
+
+        },200);
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
