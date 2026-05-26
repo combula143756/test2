@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>训练反馈实验</title>
+<title>智能训练反馈实验</title>
 
 <style>
 
@@ -34,13 +34,14 @@ body{
 h1{
 
     font-size:32px;
-    margin-bottom:20px;
+
+    margin-bottom:25px;
 
 }
 
 button{
 
-    width:260px;
+    width:280px;
 
     padding:18px;
 
@@ -79,7 +80,7 @@ button:active{
 
     margin-top:12px;
 
-    font-size:28px;
+    font-size:34px;
 
     font-weight:bold;
 
@@ -125,13 +126,16 @@ button:active{
 
 <script>
 
-let feedbackInterval;
 let countdownInterval;
+let flashInterval;
 
 function startExperiment(mode){
 
-    clearInterval(feedbackInterval);
     clearInterval(countdownInterval);
+    clearInterval(flashInterval);
+
+    // 停止之前震动
+    navigator.vibrate(0);
 
     let totalTime = 120;
 
@@ -140,17 +144,67 @@ function startExperiment(mode){
     document.getElementById("status").innerText =
     "实验进行中...";
 
-    // 安卓需要用户点击后先触发一次
-    triggerFeedback(mode);
+    // ===== 基础模式 =====
+    if(mode === "none"){
 
-    // 每秒循环反馈
-    feedbackInterval = setInterval(()=>{
+        // 什么都不做
 
-        triggerFeedback(mode);
+    }
 
-    },1000);
+    // ===== 灯光模式 =====
+    if(mode === "light"){
 
-    // 倒计时
+        flashLoop();
+
+    }
+
+    // ===== 震动模式 =====
+    if(mode === "vibration"){
+
+        if(navigator.vibrate){
+
+            let pattern = [];
+
+            for(let i = 0; i < 120; i++){
+
+                pattern.push(120);
+                pattern.push(880);
+
+            }
+
+            navigator.vibrate(pattern);
+
+        }
+
+    }
+
+    // ===== 情绪模式 =====
+    if(mode === "emotion"){
+
+        flashLoop();
+
+        if(navigator.vibrate){
+
+            let pattern = [];
+
+            for(let i = 0; i < 120; i++){
+
+                pattern.push(80);
+                pattern.push(50);
+
+                pattern.push(120);
+                pattern.push(750);
+
+            }
+
+            navigator.vibrate(pattern);
+
+        }
+
+    }
+
+    // ===== 倒计时 =====
+
     countdownInterval = setInterval(()=>{
 
         totalTime--;
@@ -159,8 +213,12 @@ function startExperiment(mode){
 
         if(totalTime <= 0){
 
-            clearInterval(feedbackInterval);
             clearInterval(countdownInterval);
+            clearInterval(flashInterval);
+
+            navigator.vibrate(0);
+
+            document.body.classList.remove("flash");
 
             document.getElementById("status").innerText =
             "实验结束";
@@ -177,63 +235,26 @@ function startExperiment(mode){
 
 }
 
-function triggerFeedback(mode){
+function flashLoop(){
 
-    // 基础模式
-    if(mode === "none"){
+    flashInterval = setInterval(()=>{
 
-        return;
+        document.body.classList.add("flash");
 
-    }
+        setTimeout(()=>{
 
-    // 灯光模式
-    if(mode === "light"){
+            document.body.classList.remove("flash");
 
-        flashScreen();
+        },200);
 
-    }
-
-    // 震动模式
-    if(mode === "vibration"){
-
-        if(navigator.vibrate){
-
-            navigator.vibrate(120);
-
-        }
-
-    }
-
-    // 情绪模式
-    if(mode === "emotion"){
-
-        flashScreen();
-
-        if(navigator.vibrate){
-
-            navigator.vibrate([80,50,120]);
-
-        }
-
-    }
-
-}
-
-function flashScreen(){
-
-    document.body.classList.add("flash");
-
-    setTimeout(()=>{
-
-        document.body.classList.remove("flash");
-
-    },200);
+    },1000);
 
 }
 
 function updateTimer(seconds){
 
     let min = Math.floor(seconds / 60);
+
     let sec = seconds % 60;
 
     if(sec < 10){
