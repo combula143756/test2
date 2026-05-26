@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>智能训练反馈实验</title>
+<title>训练反馈实验</title>
 
 <style>
 
@@ -32,56 +32,52 @@ body{
 }
 
 h1{
-    margin-bottom:20px;
-    font-size:32px;
-}
 
-.mode-buttons{
+    margin-bottom:30px;
 
-    display:flex;
-    flex-direction:column;
-
-    gap:15px;
-
-    width:260px;
+    font-size:30px;
 }
 
 button{
 
-    padding:18px;
+    width:260px;
+
+    padding:20px;
+
+    margin:12px;
 
     border:none;
-    border-radius:18px;
-
-    font-size:18px;
+    border-radius:20px;
 
     background:#5b8def;
+
     color:white;
 
-    box-shadow:0 6px 16px rgba(0,0,0,0.15);
+    font-size:20px;
+
+    box-shadow:0 6px 18px rgba(0,0,0,0.15);
 
     transition:0.15s;
-
 }
 
 button:active{
 
-    transform:scale(0.96);
+    transform:scale(0.95);
 
 }
 
-#status{
+.flash{
+
+    background:#ffd966 !important;
+}
+
+#text{
 
     margin-top:30px;
 
     font-size:20px;
 
     color:#333;
-}
-
-.flash{
-
-    background:#ffd966 !important;
 }
 
 </style>
@@ -91,100 +87,81 @@ button:active{
 
 <h1>训练反馈实验</h1>
 
-<div class="mode-buttons">
+<button onclick="noneMode()">
+无反馈
+</button>
 
-    <button onclick="startMode('none')">
-        无反馈模式
-    </button>
+<button onclick="lightMode()">
+灯光反馈
+</button>
 
-    <button onclick="startMode('light')">
-        灯光反馈模式
-    </button>
+<button onclick="vibrationMode()">
+震动反馈
+</button>
 
-    <button onclick="startMode('vibration')">
-        震动反馈模式
-    </button>
+<button onclick="emotionMode()">
+情绪反馈
+</button>
 
-    <button onclick="startMode('emotion')">
-        情绪反馈模式
-    </button>
-
-</div>
-
-<div id="status">
-请选择实验模式
+<div id="text">
+点击按钮体验不同反馈
 </div>
 
 <script>
 
-let interval;
+function noneMode(){
 
-function startMode(mode){
-
-    clearInterval(interval);
-
-    document.getElementById("status").innerText =
-    "实验进行中...";
-
-    interval = setInterval(()=>{
-
-        triggerFeedback(mode);
-
-    },1000);
+    document.getElementById("text").innerText =
+    "无反馈模式";
 
 }
 
-function triggerFeedback(mode){
+function lightMode(){
 
-    // 无反馈
-    if(mode === "none"){
+    document.body.classList.add("flash");
 
-        return;
+    setTimeout(()=>{
 
-    }
+        document.body.classList.remove("flash");
 
-    // 灯光反馈
-    if(mode === "light"){
+    },200);
 
-        document.body.classList.add("flash");
+    document.getElementById("text").innerText =
+    "灯光反馈已触发";
 
-        setTimeout(()=>{
+}
 
-            document.body.classList.remove("flash");
+function vibrationMode(){
 
-        },200);
+    if(navigator.vibrate){
 
-    }
-
-    // 震动反馈
-    if(mode === "vibration"){
-
-        if(navigator.vibrate){
-
-            navigator.vibrate(120);
-
-        }
+        navigator.vibrate(120);
 
     }
 
-    // 情绪反馈
-    if(mode === "emotion"){
+    document.getElementById("text").innerText =
+    "震动反馈已触发";
 
-        if(navigator.vibrate){
+}
 
-            navigator.vibrate([80,50,120]);
+function emotionMode(){
 
-        }
+    if(navigator.vibrate){
 
-        document.body.classList.add("flash");
-
-        setTimeout(()=>{
-
-            document.body.classList.remove("flash");
-
-        },200);
+        navigator.vibrate([80,50,120]);
 
     }
+
+    document.body.classList.add("flash");
+
+    setTimeout(()=>{
+
+        document.body.classList.remove("flash");
+
+    },200);
+
+    document.getElementById("text").innerText =
+    "情绪反馈已触发";
 
 }
 
